@@ -1,0 +1,11 @@
+[placeholders]
+struct_name = { prompt = "Plugin Struct Name", default = "MyAwesomePlugin", regex = "^([A-Z]|[0-9])+([A-Z]|[a-z]|[0-9])*$" }
+plugin_name = { prompt = "Plugin Name", default = "My Awesome Plugin" }
+
+author = { prompt = "Author", default = "Your Name" }
+email = { prompt = "Email", default = "your@email" }
+url = { prompt = "Plugin URL", default = "https://www.youtube.com/watch?v=HigCx5ixI8w" }
+description = { prompt = "Plugin Description" }
+
+clap_id = { prompt = "Clap ID", default = "my-awesome-plugin" }
+vst3_id = { prompt = "VST3 ID", default = "Exactly16Chars!!", regex = "^.{16}$" }
