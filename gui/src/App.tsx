@@ -16,7 +16,7 @@ function App() {
       <div className="input-group">
         <div className="labeled-input">
           <div>
-            {gain.name}: {gain.value}
+            {gain.name}: {gain.value_to_string(gain.value)}
             {gain.unit}
           </div>
           <input
@@ -25,13 +25,13 @@ function App() {
             min={0}
             max={1}
             step={0.001}
-            value={gain.range.normalize(gain.rawValue)}
+            value={gain.normalizedValue}
             onChange={(e) => {
-              gain.setValue(gain.range.unnormalize(Number(e.target.value)));
+              gain.setNormalizedValue(parseFloat(e.target.value));
             }}
           />
         </div>
-        <button onClick={() => gain.setValue(gain.defaultValue)}>Reset</button>
+        <button onClick={() => gain.resetValue()}>Reset</button>
       </div>
     </div>
   );

@@ -1,11 +1,11 @@
 use nih_plug::prelude::*;
 use react_plug::prelude::*;
 
-rp_params! {
+define_params! {
     {{struct_name}}Params {
         gain: FloatParam {
             name: "Gain",
-            value: util::db_to_gain(0.0),
+            default_value: util::db_to_gain(0.0),
             range: FloatRange::Linear {
                 min: util::db_to_gain(-48.0),
                 max: util::db_to_gain(6.0),

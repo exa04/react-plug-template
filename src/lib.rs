@@ -5,35 +5,30 @@ use crate::params::*;
 use nih_plug::prelude::*;
 use react_plug::prelude::*;
 
-use crossbeam_channel::{Receiver, Sender};
 use include_dir::{include_dir, Dir};
 use std::sync::Arc;
+use serde::{Deserialize, Serialize};
+use ts_rs::TS;
 
 pub struct {{struct_name}} {
     params: Arc<{{struct_name}}Params>,
-    editor_channel: (Sender<PluginMessage>, Receiver<PluginMessage>),
 }
 
 impl Default for {{struct_name}} {
     fn default() -> Self {
-        let channel = crossbeam_channel::bounded::<PluginMessage>(64);
-
         Self {
-            params: Arc::new({{struct_name}}Params::new(&Arc::new(channel.0.clone()))),
-            editor_channel: channel,
+            params: Arc::new({{struct_name}}Params::default()),
         }
     }
 }
 
-#[gui_message(params = {{struct_name}}Params)]
-pub enum GuiMessage {
-    Ping,
-}
+#[derive(Debug, Serialize, Deserialize, TS)]
+#[ts(export, export_to = "../gui/src/bindings/GuiMessage.ts")]
+enum GuiMessage { }
 
-#[plugin_message(params = {{struct_name}}Params)]
-pub enum PluginMessage {
-    Pong,
-}
+#[derive(Debug, Serialize, Deserialize, TS)]
+#[ts(export, export_to = "../gui/src/bindings/PluginMessage.ts")]
+enum PluginMessage { }
 
 static EDITOR_DIR: Dir = include_dir!("$CARGO_MANIFEST_DIR/gui/dist");
 
@@ -71,18 +66,13 @@ impl Plugin for {{struct_name}} {
     }
 
     fn editor(&mut self, _async_executor: AsyncExecutor<Self>) -> Option<Box<dyn Editor>> {
-        let _sender = self.editor_channel.0.clone();
-
-        ReactPlugEditor::new::<GuiMessage>(
-            self.params.clone(),
-            &EDITOR_DIR,
-            self.editor_channel.clone(),
-        )
-        .with_developer_mode(true)
-        .with_message_handler(move |_message: GuiMessage| {
-            // Handle messages from the GUI here
-        })
-        .into()
+        ReactPlugEditor::<PluginMessage, GuiMessage>::new(
+                self.params.clone(),
+                &EDITOR_DIR,
+                (800, 600),
+            )
+            .with_developer_mode(true)
+            .into()
     }
 
     const NAME: &'static str = "{{ plugin_name }}";
